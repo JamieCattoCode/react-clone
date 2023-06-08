@@ -9,7 +9,8 @@ document.getElementById('btn-prop').addEventListener('click', () => {
 })
 
 function renderComponent() {
-    render(Component, { propCount }, document.getElementById('root'));
+    render(Component, { propCount, buttonElement: document.getElementById('btn-count') }, document.getElementById('root'));
+    render(Component, { propCount, buttonElement: document.getElementById('btn-count-2') }, document.getElementById('root-2'));
 };
 
 renderComponent();
