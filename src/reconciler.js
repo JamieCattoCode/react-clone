@@ -1,4 +1,4 @@
-import { createElement, createTextElement, TEXT_ELEMENT } from "./element"
+import { createElement, createTextElement, TEXT_ELEMENT } from "./element.js"
 
 export function render(element, parentNode) {
     const node = element.type === TEXT_ELEMENT

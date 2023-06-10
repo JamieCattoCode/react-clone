@@ -1,4 +1,4 @@
-import { TEXT_ELEMENT } from "./element";
+import { TEXT_ELEMENT } from "./element.js";
 
 
 // @param {HTMLElement} dom - the HTML element where props get applied to

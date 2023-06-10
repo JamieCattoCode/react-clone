@@ -1,5 +1,5 @@
-import { render } from "./reconciler";
-import { createElement } from "./element";
+import { render } from "./reconciler.js";
+import { createElement } from "./element.js";
 
 let globalId = 0;
 let globalParent;
