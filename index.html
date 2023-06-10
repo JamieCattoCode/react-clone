@@ -4,14 +4,24 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script type="module" src="index.js"></script>
+    <title>MyReact</title>
+    <!-- <script type="module" src="src/index.js"></script> -->
 </head>
 <body>
-    <div id="root"></div>
-    <button id="btn-count">Increment count</button>
-    <div id="root-2"></div>
-    <button id="btn-count-2">Increment count</button>
-    <button id="btn-prop">Change prop</button>
+    <div id="app"></div>
+    <script src="https://unpkg.com/babel-standalone@7.0.0-beta.3/babel.min.js"></script>
+    <script src="/dist/MyReact.umd.js"></script>
+    <script type="text/jsx">
+        /** @jsx MyReact.createElement */
+        console.log(MyReact);
+        const appElement = (
+            <div>
+                <h1>Hello, what is your name?</h1>
+                <p>My name is Jamie</p>
+            </div>
+        )
+        MyReact.render(appElement, document.getElementById("app"));
+    </script>
+
 </body>
 </html>
