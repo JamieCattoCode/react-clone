@@ -1,3 +1,6 @@
+import { render } from "./reconciler";
+import { createElement } from "./element";
+
 let globalId = 0;
 let globalParent;
 let componentState = new Map();
@@ -106,15 +109,20 @@ export function useMemo(callback, dependencies) {
     })()
 };
 
-export function render(component, props, parent) {
-    const state = componentState.get(parent) || { cache: [] };
-    componentState.set(parent, {...state, component, props});
-    globalParent = parent;
+// export function render(component, props, parent) {
+//     const state = componentState.get(parent) || { cache: [] };
+//     componentState.set(parent, {...state, component, props});
+//     globalParent = parent;
     
-    const output = component(props);
+//     const output = component(props);
 
-    // Set globalId to 0 after we've finished rendering the component
-    globalId = 0;
+//     // Set globalId to 0 after we've finished rendering the component
+//     globalId = 0;
 
-    parent.textContent = output;
+//     parent.textContent = output;
+// };
+
+export default {
+    render,
+    createElement
 };
