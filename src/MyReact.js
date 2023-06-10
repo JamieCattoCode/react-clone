@@ -122,7 +122,7 @@ export function useMemo(callback, dependencies) {
 //     parent.textContent = output;
 // };
 
-export default {
+export {
     render,
     createElement
 };
