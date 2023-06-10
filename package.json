@@ -1,0 +1,23 @@
+{
+  "name": "react-clone",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JamieCattoCode/react-clone.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JamieCattoCode/react-clone/issues"
+  },
+  "homepage": "https://github.com/JamieCattoCode/react-clone#readme",
+  "devDependencies": {
+    "rollup": "^3.24.1"
+  }
+}
