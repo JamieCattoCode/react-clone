@@ -19,39 +19,116 @@ function createElement(type, configObject, ...args) {
     return { type, props };
 }
 
-function render(element, parentNode) {
-    try {
+// @param {HTMLElement} dom - the HTML element where props get applied to
+// @param {object} props - consists of both attributes and event listeners
+function updateDomProperties(dom, previousProps, nextProps) {
+    // Function to check if a prop is an event listener
+    const isListener = (name) => name.startsWith("on");
 
-        console.log('Parent node:');
-        console.log(parentNode);
-        console.log('Element:');
-        console.log(element);
-        
-        const isTextElement = (element) => element.type === TEXT_ELEMENT;
-        
-        const node = isTextElement(element)
-        ? document.createTextNode(element?.props?.nodeValue) 
-        : document.createElement(element.type, element.props, element.props?.children);
+    // Function to check if a prop is an attribute
+    // As long as it's not a listener, and it is not the 'children' array
+    const isAttribute = (name) => !isListener(name) && name !== 'children';
 
-        console.log('Element as node:');
-        console.log(node);
-        
-        // Add node to the parent node
-        parentNode.appendChild(node);
-        // Call render recursively where the breaking condition is that element === parentNode
-        const children = element?.props?.children;
-        if (children.length > 0) {
-            children.forEach(child => {
-                render(child, node);
-            });
-        } 
-    } catch (error) {
-        console.log('Failed parent node:');
-        console.log(parentNode);
-        console.log('Failed element:');
-        console.log(element);
-        console.log(error);
+    // Remove previous event listeners
+    Object.keys(previousProps)
+        .filter(isListener)
+        .forEach(name => {
+            const eventType = name.toLowerCase().substring(2);
+            dom.removeEventListener(eventType, previousProps[name]);
+        });
+
+
+    // Remove previous attributes
+    Object.keys(previousProps)
+        .filter(isAttribute)
+        .forEach(name => {
+            dom[name] = null;
+        });
+    
+    // Set new event listeners
+    Object.keys(nextProps)
+        .filter(isListener)
+        .forEach(name => {
+            const eventType = name.toLowerCase().substring(2);
+            dom.addEventListener(eventType, nextProps[name]);
+        });
+
+    // Set new attributes
+    Object.keys(nextProps)
+        .filter(isAttribute)
+        .forEach(name => {
+            dom[name] = nextProps[name];
+        });
+}
+
+let rootInstance = null;
+
+function render(element, parentDom) {
+    const previousInstance = rootInstance;
+    const nextInstance = reconcile(parentDom, previousInstance, element);
+    rootInstance = nextInstance;
+}
+function reconcile(parentDom, instance, element) {
+    if (instance == null) {
+        // Initial render
+        const newInstance = instantiate(element);
+        parentDom.appendChild(newInstance.dom);
+        return newInstance;
+    } else if (element == null) {
+        // Case: a child element was previously present but is not in the new element
+        parentDom.removeChild(instance.dom);
+        return null;
+    } else if (instance.element.type === element.type) {
+        updateDomProperties(instance.dom, instance.element.props, element.props);
+        instance.childInstances = reconcileChildren(instance, element);
+        instance.element = element;
+    } else {
+        const newInstance = instantiate(element);
+        parentDom.replaceChild(newInstance.dom, instance.dom);
+        return newInstance;
     }
+
+}
+
+function instantiate(element) {
+    const { type, props } = element;
+    
+    const isTextElement = type === TEXT_ELEMENT;
+    const dom = isTextElement
+        ? document.createTextNode("")
+        : document.createElement(type, props, props?.children);
+    
+    updateDomProperties(dom, {}, props);
+
+    // Instantiate and append children
+    const childElements = props.children || [];
+    
+    // Recursively call instantiate on each child
+    const childInstances = childElements.map(instantiate);
+    
+    const childDoms = childInstances.map(childInstance => childInstance.dom);
+    childDoms.forEach(childDom => dom.appendChild(childDom));
+
+    const instance = {dom, element, childInstances};
+    return instance;
+}
+
+function reconcileChildren(instance, element) {
+    const dom = instance.dom;
+    const childInstances = instance.childInstances;
+    const nextChildElements = element.props.children || [];
+    const newChildInstances = [];
+    const count = Math.max(childInstances.length, nextChildElements.length);
+
+    for (let i=0; i < count; i++) {
+        const childInstance = childInstances[i];
+        const childElement = nextChildElements[i];
+
+        const newChildInstance = reconcile(dom, childInstance, childElement);
+        newChildInstances.push(newChildInstance);
+    }
+
+    return newChildInstances.filter(instance => instance != null);
 }
 
 let globalId = 0;
